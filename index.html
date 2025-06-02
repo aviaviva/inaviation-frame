@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#INAVIATION Profile Frame</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    canvas {
+      border-radius: 50%;
+      margin-top: 1rem;
+    }
+    #download-btn {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>#INAVIATION Profile Frame</h1>
+  <input type="file" id="upload" accept="image/*"><br>
+  <canvas id="canvas" width="768" height="768"></canvas>
+  <button id="download-btn">Download Image</button>
+
+  <script>
+    const uploadInput = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const frame = new Image();
+    frame.src = 'LinkedInFrame-2.png';
+
+    const drawImage = (userImg) => {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = 768;
+      tempCanvas.height = 768;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(userImg, 0, 0, 768, 768);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
+      ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    };
+
+    const defaultImage = new Image();
+    defaultImage.onload = () => drawImage(defaultImage);
+    defaultImage.crossOrigin = "anonymous";
+    defaultImage.src = 'https://via.placeholder.com/768/cccccc/000000?text=Your+Photo';
+
+    uploadInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => drawImage(img);
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('download-btn').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'inaviation-profile.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>
