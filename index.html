@@ -37,39 +37,40 @@
     const frame = new Image();
     frame.src = 'LinkedInFrame-2.png';
 
-    function cropToSquare(img) {
+    function drawSquareCroppedImage(img) {
       const squareSize = Math.min(img.width, img.height);
-      const sx = (img.width - squareSize) / 2;
-      const sy = (img.height - squareSize) / 2;
+      const offsetX = (img.width - squareSize) / 2;
+      const offsetY = (img.height - squareSize) / 2;
 
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = 768;
       tempCanvas.height = 768;
       const tempCtx = tempCanvas.getContext('2d');
 
-      tempCtx.drawImage(img, sx, sy, squareSize, squareSize, 0, 0, 768, 768);
-      return tempCanvas;
-    }
+      tempCtx.drawImage(
+        img,
+        offsetX, offsetY, squareSize, squareSize,
+        0, 0, 768, 768
+      );
 
-    function drawImage(userImg) {
-      const squareImage = cropToSquare(userImg);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(squareImage, 0, 0);
+      ctx.drawImage(tempCanvas, 0, 0);
       ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
     }
 
     const defaultImage = new Image();
-    defaultImage.onload = () => drawImage(defaultImage);
+    defaultImage.onload = () => drawSquareCroppedImage(defaultImage);
     defaultImage.crossOrigin = "anonymous";
     defaultImage.src = 'https://via.placeholder.com/1000x1500/cccccc/000000?text=Your+Photo';
 
     uploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
+
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
-        img.onload = () => drawImage(img);
+        img.onload = () => drawSquareCroppedImage(img);
         img.src = event.target.result;
       };
       reader.readAsDataURL(file);
