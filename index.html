@@ -37,10 +37,12 @@
     const frame = new Image();
     frame.src = 'LinkedInFrame-2.png';
 
-    function drawSquareCroppedImage(img) {
-      const squareSize = Math.min(img.width, img.height);
-      const offsetX = (img.width - squareSize) / 2;
-      const offsetY = (img.height - squareSize) / 2;
+    function drawCroppedImage(img) {
+      const width = img.naturalWidth;
+      const height = img.naturalHeight;
+      const size = Math.min(width, height);
+      const offsetX = (width - size) / 2;
+      const offsetY = (height - size) / 2;
 
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = 768;
@@ -49,7 +51,7 @@
 
       tempCtx.drawImage(
         img,
-        offsetX, offsetY, squareSize, squareSize,
+        offsetX, offsetY, size, size,
         0, 0, 768, 768
       );
 
@@ -59,7 +61,7 @@
     }
 
     const defaultImage = new Image();
-    defaultImage.onload = () => drawSquareCroppedImage(defaultImage);
+    defaultImage.onload = () => drawCroppedImage(defaultImage);
     defaultImage.crossOrigin = "anonymous";
     defaultImage.src = 'https://via.placeholder.com/1000x1500/cccccc/000000?text=Your+Photo';
 
@@ -70,7 +72,7 @@
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
-        img.onload = () => drawSquareCroppedImage(img);
+        img.onload = () => drawCroppedImage(img);
         img.src = event.target.result;
       };
       reader.readAsDataURL(file);
